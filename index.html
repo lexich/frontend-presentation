@@ -1,0 +1,529 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+  <title>Frontend инструментарий</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=792, user-scalable=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <link rel="stylesheet" href="bower_components/shower-ribbon/styles/screen.css">
+  <link rel="stylesheet" href="assets/highlight/styles/darkula.css">  
+  <style>
+  .slide pre code.hljs {
+    display: block;
+    overflow-x: auto;
+    padding: 0.5em;
+    background: #2b2b2b;
+    -webkit-text-size-adjust: none;
+    color: #bababa;
+    font-size: 14px;
+    line-height: 20px;
+  }
+  .slide pre code.hljs, .slide pre code.hljs-tag, .slide pre code.hljs-title, .slide pre code.css .hljs-rule, .slide pre code.css .hljs-value, .slide pre code.aspectj .hljs-function, .slide pre code.css .hljs-function .hljs-preprocessor, .slide pre code.hljs-pragma{
+    color: #bababa;
+  }
+</style>
+</head>
+<body class="list">
+  <header class="caption">
+    <h1>Frontend инструментарий</h1>
+    <p>Ефремов Алексей</p>
+  </header>
+  <section class="slide cover" id="Cover">
+    <div>
+      <h2>Frontend инструментарий</h2>
+      <p><a href="http://lexich.ru">Ефремов Алексей</a></p>
+      <img src="pictures/cover.jpg" alt="">
+      <!--
+        To apply styles to the certain slides
+        set slide ID to get needed elements
+        -->
+      <style>
+        #Cover h2 {
+          margin: -100px 0 0;
+          color:#FFF;
+          text-align:center;
+          font-size:70px;
+          }
+        #Cover p {
+          margin:10px 0 0;
+          text-align:center;
+          color:#FFF;
+          font-style:italic;
+          font-size:20px;
+          }
+          #Cover p a {
+            color:#FFF;
+            }
+      </style>
+    </div>
+  </section>  
+
+  <section class="slide cover" id="taskrunners">
+    <div>
+      <h2>Зачем нужны сборщики<b>?</b></h2>
+      <img src="pictures/question.jpg" alt="">      
+    </div>
+    <style>
+      #taskrunners h2{
+        margin: -100px 0 0;
+        font-size: 80px;
+        color: white;
+        background: rgba(166, 166, 166, 0.57);
+        text-align: center;
+        border-radius: 60px;
+        line-height: 100px;
+        padding: 0px 10px 10px 10px;
+      }
+      #taskrunners h2 b{
+        color: red;
+        font-size: 100px;
+      }
+    </style>
+  </section>
+
+  <section class="slide">
+    <div>
+      <h2>Сборка статической части веб проекта</h2>
+      <ol>      
+        <li>Сборка css и js</li>
+        <li class="next">Сжатие css и js</li>
+        <li class="next">Префиксы в css</li>
+        <li class="next">Добавление ревизий в assets для "пробивания" кэша</li>
+        <li class="next">Использование дополнительных языков для разработки</li>
+        <li class="next">Scaffolding</li>
+        <li class="next">Тестирование</li>
+        <li class="next">...Выполнение специфических задач</li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="slide cover" id="evolution">
+    <div>
+      <h2>Эволюция сборщиков</h2>
+      <img src="pictures/evolution.jpg" alt="">      
+    </div>    
+    <style>
+      #evolution img {
+        margin: 50px 0;
+      }
+      #evolution h2 {
+        color: yellow;
+        position: absolute;
+        bottom: 50px;
+        right: 20px;
+        font-size: 80px;
+      }
+    </style>
+  </section>
+
+  <section class="slide">
+    <div>
+      <h2>Make</h2>  
+        <pre>
+        <code class="makefile">
+STYLESRC = static/styles/main.sass \
+    static/styles/mixins.sass
+STYLEOBJ = ${STYLESRC:.sass=.css}
+STYLEOUT = static/styles/app.css
+
+$(STYLEOUT): $(STYLEOBJ)
+    cp $< $@
+
+%.css: %.sass
+    sass -C $< > $@
+
+.PHONY: styles
+styles: $(STYLEOUT)
+
+.PHONY: clean
+clean:
+    -rm $(STYLEOBJ)
+    -rm $(STYLEOUT)
+        </code>
+        </pre>
+    </div>    
+  </section>
+
+   <section class="slide">
+    <div>
+      <h2>Grunt</h2>  
+        <pre>
+        <code class="js" style="font-size: 14px;">
+grunt.initConfig({
+    autoprefixer: {
+        build: {
+            src:  'src/*.css',
+            dest: 'dest/'
+        }
+    }
+});
+grunt.loadNpmTasks('grunt-autoprefixer');
+        </code>
+        </pre>
+    </div>    
+  </section>
+
+  <section class="slide">
+    <div>
+      <h2>Grunt: проблемы</h2>  
+      <ul>
+        <li>Запись на диск каждого шага (очень медленно)</li>
+        <li class="next">Для каждого шага компиляции нужно указывать файлы</li>
+        <li class="next">Сложно писать цепочки преобразований</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="slide">
+    <div>
+      <h2>Gulp</h2>  
+        <pre>
+        <code class="js" style="font-size: 14px;">
+gulp.task('build', function () {
+    gulp.src('src/*.scss')
+        .pipe( require('gulp-sass')() )
+        .pipe( require('gulp-autoprefixer')() )
+        .pipe( gulp.dest('dist') );
+});
+        </code>
+        </pre>
+    </div>    
+  </section>
+
+  <section class="slide">
+    <div>
+      <h2>Gulp: скорость</h2>  
+      <ul>
+        <li>Запись на диск только в самом конце</li>
+        <li class="next">Шаги могут идти параллельно</li>
+        <li class="next">Простота написания новых обработчиков</li>
+      </ul>
+      <p class="next">Gulp быстрее до 2-х раз</p>
+    </div>
+  </section>
+
+  <section class="slide" id="grunt-gulp-api">
+    <div>
+      <h2 style="margin-top: -70px;">Сравнение Grunt и Gulp api</h2>
+      <table>
+        <tbody>          
+          <tr>
+            <td class="next">
+              Grunt: API
+              <pre>
+                <code class="js">
+grunt.initConfig({
+    sass: {
+        dist: {
+            files: [{
+                src: 'src/**/*.scss',
+                dest: '../.tmp/styles',
+            }]
+        }
+    },
+    autoprefixer: {
+        dist: {
+            files: [{
+                src: '.tmp/styles/{,*/}*.css',
+                dest: 'dist'
+            }]
+        }
+    },
+    watch: {
+        styles: {
+            files: ['src/{,*/}*.scss'],
+            tasks: ['sass:dist', 'autoprefixer:dist']
+        }
+    }
+});
+grunt.registerTask('default', ['styles', 'watch']);                  
+                </code>
+              </pre>
+            </td>
+            <td class="next">
+              Gulp: API
+              <pre>
+                <code class="js">
+gulp.task('sass', function () {
+    gulp.src('src/**/*.scss')
+        .pipe( require('gulp-ruby-sass')() )
+        .pipe( require('gulp-autoprefixer')() )
+        .pipe( gulp.dest('dist/') );
+});
+gulp.task('default', function() {
+    gulp.run('sass');
+    gulp.watch('src/**/*.scss', function() {
+        gulp.run('sass');
+    });
+});                  
+                </code>
+              </pre>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <style>      
+      #grunt-gulp-api code{
+        width: 380px;
+        font-size: 12px;
+        line-height: 15px;
+        margin-right: 20px
+      }
+    </style>
+  </section>
+
+   <section class="slide">
+    <div>
+      <h2>Gulp: карты кода</h2>  
+      <pre>
+        <code class="js">
+var sourcemap = require('gulp-sourcemaps');
+gulp.task('sass', function () {
+    gulp.src('src/**/*.scss')
+        .pipe( sourcemap.init() )
+        .pipe( require('gulp-ruby-sass')(map: true) )
+        .pipe( require('gulp-autoprefixer')() )
+        .pipe( sourcemap.write() )
+        .pipe( gulp.dest('dist/') );
+});          
+        </code>
+      </pre>
+    </div>
+  </section>
+  
+  <section class="slide gulp-pipe">
+    <div>
+      <h2>Gulp: управляем потоками</h2>
+      <pre>
+        <code class="js">
+var argv = require('yargs').argv;
+gulp.task('sass', function () {
+    gulp.src('./src/*.js')
+        .pipe( concat('app.js') )
+        .pipe( <span style="background:blue;">gulpif</span>(argv.production, uglify()) )
+        .pipe( gulp.dest('dist/') );
+});
+        </code>
+      </pre>
+    </div>    
+  </section>
+
+  <section class="slide cover" id="js-problem">
+    <div>
+      <span>ПРОБЛЕМА</span>
+      <h2>Зависимости в js</h2>      
+      <img src="pictures/problem.jpg" alt="">
+    </div>
+    <style>
+      #js-problem span{
+        background: white;
+        padding: 10px;
+        border-radius: 1em;
+      }
+      #js-problem h2{
+        color: red;
+      }
+      #js-problem img{
+        position: absolute;
+        top: -185px;
+      }
+    </style>
+  </section>
+
+  <section class="slide">
+    <div>
+      <h4>ПРОБЛЕМА</h4>
+      <h2>Зависимости</h2>
+      <pre>
+      <code>
+- app.js
+  - popups/signup.js
+    - bower/visibility.js
+  - page/home.js
+    - bower/visibility.js
+- landing.js
+  - popups/signup.js
+    - bower/visibility.js
+      </code>
+      </pre>
+    </div>        
+  </section>
+
+  <section class="slide">
+    <div>
+      <h2>Sprockets: декларативность</h2>
+      <pre>
+        <code class="js">
+//= require visibility
+$("[data-role=signup]").click(function() {
+  Visibility.onVisible(showNotice);
+});
+        </code>
+      </pre>
+    </div>
+  </section>
+
+  <section class="slide">
+    <div>
+      <h2>Sprockets: сразу из коробки</h2>
+      <ul>
+        <li>Компиляция Sass, CoffeeScript, JST</li>
+        <li class="next">Объединение</li>
+        <li class="next">Сжатие</li>
+        <li class="next">Gzip</li>
+        <li class="next">Кеш‑бастеры</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="slide">
+    <div>
+      <h2>Sprockets: недостатки</h2>
+      <ul>
+        <li>Глобальная область видимости</li>
+        <li class="next">Язык ruby для расширения функциональности</li>        
+        <li class="next">Компиляция файла по http запросу</li>        
+      </ul>
+    </div>
+  </section>
+
+  <section class="slide cover">
+    <div>
+      <h2>Решение проблемы</h2>
+      <p class="next" style="color: red; font-size: 70px; font-weight: bold;">Browserify!!!</p>
+      <img src="pictures/browserify.jpg" alt="">
+    </div>
+  </section>
+
+  <section class="slide">
+    <div>
+      <h2>Browserify</h2>
+      <ul>
+        <li>Объединение JS через require()</li>
+        <li class="next">Использование npm-библиотек в браузере</li>        
+        <li class="next">Можно добавить компиляторы Babel (ES6, ES2015, ES7), CoffeeScript, Typescript и т.п.</li>
+        <li class="next">Простая интеграция с gulp</li>
+        <li class="next">Простая возможность добавления новых трансформаций</li>
+      </ul>
+    </div>
+  </section>
+  
+  <section class="slide" id="browserify">
+    <div>
+      <h2>Gulp и browserify</h2>
+      <div class="circle1 next">
+        gulp
+        <div class="circle2 next">
+          browserify
+        </div>
+      </div>
+    </div>
+    <style>
+      #browserify .circle1{
+        text-align: center;
+        line-height: 100px;
+        position: relative;
+        width: 400px;
+        height: 400px;
+        border-radius: 400px;
+        background: #7ac6ff;
+        border: 3px solid #0080e0;
+        font-weight: bold;
+      }
+      #browserify .circle2{
+        line-height: 200px;
+        position: absolute;
+        top: 100px;
+        left: 100px;
+        width: 200px;
+        height: 200px;
+        border-radius: 200px;
+        border: 3px solid  #e00080;
+        background: #ff7ac6;
+      }
+    </style>
+  </section>
+
+  <section class="slide">
+    <div>
+      <h2>Browserify + Gulp</h2>
+      <pre>
+        <code class="js">
+var source = require("vinyl-source-stream");
+var buffer = require("vinyl-buffer");    
+var babelify = require("babelify");
+var browserify = require("browserify");
+
+gulp.task("browserify", ()=> {  
+  return browserify("./app/scripts/app.js")
+    .transform(babelify.configure({
+      only: /\/scripts\/.+\.js$/,
+      loose: "all"
+    }))
+    .bundle()
+    .pipe(source("bundle.js"))
+    .pipe(buffer())
+    .pipe(gulp.dest("public/js"));
+});
+        </code>
+      </pre>
+    </div>
+  </section>
+
+  <section class="slide">
+    <div>
+      <h2>Разделение обязанностей</h2>
+      <ul>
+        <li class="next">
+          Browserify  
+          <ul>
+            <li>Компиляция и сборка JS</li>
+            <li class="next">Inline json</li>
+            <li class="next">Компиляция htmlbars и jst шаблонов</li>
+            <li class="next">Возможен inline css (но не очень удобный процесс разработки)</li>
+          </ul>
+        </li>
+        <li class="next">
+          Gulp - любые другие задачи          
+        </li>              
+      </ul>
+    </div>
+  </section>
+  <section class="slide">
+    <div>
+      <h2>Реализация инфраструктуры</h2>
+      <img src="pictures/gulp.png" alt="">
+    </div>
+  </section>
+  <section class="slide cover">
+    <div>
+      <h2 style="color: red; text-align: center; font-size: 100px; margin-top: -100px;">Вопросы</h2>
+      <p style="position: absolute; text-align: left; color: red; bottom: 0px; left: 30px">Ефремов Алексей<br>
+      <a href="http://twitter.com/lexich" style="color:black">@lexich</a><br>
+      <a href="https://github.com/lexich" style="color:black">https://github.com/lexich</a>
+      </p>
+      <img style="height:100%;" src="pictures/end.jpg" alt="">
+    </div>
+  </section>
+  <!--
+    To hide progress bar from entire presentation
+    just remove “progress” element.
+    -->
+  <div class="progress"><div></div></div>
+  <script src="bower_components/jquery/dist/jquery.min.js"></script>
+  <script src="bower_components/shower-core/shower.min.js"></script>
+  <script src="assets/highlight/highlight.pack.js"></script>  
+  <script>
+    $(document).ready(function(){
+      var $snippet = $("pre code");
+      $snippet.each(function() {
+        var el = $(this).get(0);
+        hljs.highlightBlock(el);
+      });
+    });
+  </script>
+  <!-- Copyright © 2014 Yours Truly, Famous Inc. -->
+  <!-- Photos by John Carey, fiftyfootshadows.net -->
+</body>
+</html>
